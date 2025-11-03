@@ -1,0 +1,355 @@
+-- by shelby 
+local args = {
+    [1] = "Really black"
+}
+
+game:GetService("ReplicatedStorage").Remotes.ChangeBodyColor:FireServer(unpack(args))
+
+pcall(function()
+    local args = {
+    [1] = {
+        [1] = 376532000, -- Torso
+        [2] = 376531012, -- Perna Esquerda 
+        [3] = 376530220, -- Perna Direita 
+        [4] = 376531703, -- Braço Direito
+        [5] = 376531300, -- Braço Esquerdo 
+        [6] = 0
+    }
+}
+
+game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(unpack(args))
+
+    local Players = game:GetService("Players")
+    local ReplicatedStorage = game:GetService("ReplicatedStorage")
+    local UserInputService = game:GetService("UserInputService")
+    local StarterGui = game:GetService("StarterGui")
+    local RunService = game:GetService("RunService")
+    local Workspace = game:GetService("Workspace")
+    local Lighting = game:GetService("Lighting")
+    local TextChatService = game:GetService("TextChatService")
+
+    local LocalPlayer = Players.LocalPlayer
+    local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local Humanoid = Character:FindFirstChildOfClass("Humanoid")
+    if not Humanoid then return end
+
+    local Remotes = ReplicatedStorage:WaitForChild("Remotes")
+    local WearRemote = Remotes:WaitForChild("Wear")
+    local WearShirtRemote = Remotes:WaitForChild("WearShirt")
+    local WearPantsRemote = Remotes:WaitForChild("WearPants")
+
+    local Desc = Humanoid:GetAppliedDescription()
+    for _, accessory in ipairs(Desc:GetAccessories(true)) do
+        if accessory.AssetId then
+            WearRemote:InvokeServer(accessory.AssetId)
+        end
+    end
+
+    local accessoriesToWear = {
+        8641381155,
+        7681379967,
+        132057312165814,
+        18788330060,
+        113134340535080,
+        140288914112420,
+    }
+    for _, id in ipairs(accessoriesToWear) do
+        pcall(function()
+            WearRemote:InvokeServer(id)
+        end)
+    end
+
+    local shirtsToWear = {}
+    local pantsToWear = {}
+    for _, id in ipairs(shirtsToWear) do
+        WearShirtRemote:InvokeServer(id)
+    end
+    for _, id in ipairs(pantsToWear) do
+        WearPantsRemote:InvokeServer(id)
+    end
+
+    local animate = Character:WaitForChild("Animate")
+
+    -- Sistema de Bug Player
+    local buggedPlayers = {}
+    local bugConnections = {}
+
+    local function bugPlayer(targetPlayer)
+        local Remote = ReplicatedStorage:FindFirstChild("RE") and ReplicatedStorage.RE:FindFirstChild("1Gu1n")
+        if not Remote then return end
+        if not targetPlayer or not targetPlayer.Character then return end
+        
+        local playerName = targetPlayer.Name
+        if buggedPlayers[playerName] then
+            -- SE JÁ ESTÁ BUGADO: DESBUGA
+            if bugConnections[playerName] then
+                bugConnections[playerName]:Disconnect()
+                bugConnections[playerName] = nil
+            end
+            buggedPlayers[playerName] = nil
+            return false
+        end
+        
+        -- SE NÃO ESTÁ BUGADO: BUGA
+        buggedPlayers[playerName] = true
+        bugConnections[playerName] = RunService.Stepped:Connect(function()
+            local target = Players:FindFirstChild(playerName)
+            if not target or not target.Character or not target.Character:FindFirstChild("HumanoidRootPart") then
+                if bugConnections[playerName] then
+                    bugConnections[playerName]:Disconnect()
+                    bugConnections[playerName] = nil
+                end
+                buggedPlayers[playerName] = nil
+                return
+            end
+            
+            local crazyVector = Vector3.new(
+                math.random(1e10000, 1e10000),
+                math.random(1e10000, 1e10000),
+                math.random(1e10000, 1e10000)
+            )
+            
+            local args = {
+                [1] = target.Character.HumanoidRootPart,
+                [2] = target.Character.HumanoidRootPart,
+                [3] = crazyVector,
+                [4] = target.Character.HumanoidRootPart.Position,
+                [5] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("MuzzleEffect"),
+                [6] = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault.GunScript_Local:FindFirstChild("HitEffect"),
+                [7] = 3000,
+                [8] = 3000,
+                [9] = { [1] = false },
+                [10] = {
+                    [1] = 10000,
+                    [2] = Vector3.new(3000, 3000, 3000),
+                    [3] = BrickColor.new(29),
+                    [4] = 0.05,
+                    [5] = Enum.Material.SmoothPlastic,
+                    [6] = 0.05
+                },
+                [11] = true,
+                [12] = false
+            }
+            
+            Remote:FireServer(unpack(args))
+        end)
+        return true
+    end
+
+    local function getPlayerFromMouse(mouse)
+        local target = mouse.Target
+        if not target then return nil end
+        local character = target.Parent
+        while character and not character:FindFirstChild("Humanoid") do
+            character = character.Parent
+        end
+        if character and character:FindFirstChild("Humanoid") then
+            return Players:GetPlayerFromCharacter(character)
+        end
+        return nil
+    end
+
+    -- Sistema de Expansão Dogger
+    local cancelExpansion = false
+    local expansionSound = nil
+    local expansionModel = nil
+    local originalSky = nil
+
+    -- Tool para ativar expansão
+    local startTool = Instance.new("Tool")
+    startTool.Name = "Ativar Expansão Dogger"
+    startTool.RequiresHandle = false
+    startTool.TextureId = "rbxassetid://75822847475817"
+    startTool.Parent = LocalPlayer:WaitForChild("Backpack")
+
+    startTool.Activated:Connect(function()
+        cancelExpansion = false
+
+        -- Enviar mensagem no chat
+        if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+            TextChatService.TextChannels.RBXGeneral:SendAsync(
+                "hi\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\r\rServer:Tsukuyomi infinito"
+            )
+        else
+            print("Madara chorou no banho F")
+        end
+
+        -- Função para ativar o domínio
+        local function ativarDominio()
+            local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+            local hrp = char:WaitForChild("HumanoidRootPart")
+
+            local dominio = Instance.new("Model", workspace)
+            dominio.Name = "InfiniteVoid"
+            expansionModel = dominio
+
+            local esfera = Instance.new("Part", dominio)
+            esfera.Name = "EsferaDominio"
+            esfera.Size = Vector3.new(0, 0, 0)
+            esfera.Position = hrp.Position
+            esfera.Material = Enum.Material.Neon
+            esfera.BrickColor = BrickColor.new("Really Red")
+            esfera.Anchored = true
+            esfera.CanCollide = false
+
+            local som = Instance.new("Sound", esfera)
+            som.SoundId = "rbxassetid://77326881595922"
+            som.Volume = 2
+            som.Looped = true
+            som:Play()
+            expansionSound = som
+
+            -- Alterar o céu
+            originalSky = Lighting:FindFirstChildOfClass("Sky")
+            if originalSky then
+                originalSky.Parent = nil
+            end
+
+            local newSky = Instance.new("Sky", Lighting)
+            newSky.SkyboxBk = "rbxassetid://106463748010353"
+            newSky.SkyboxDn = "rbxassetid://106463748010353"
+            newSky.SkyboxFt = "rbxassetid://106463748010353"
+            newSky.SkyboxLf = "rbxassetid://106463748010353"
+            newSky.SkyboxRt = "rbxassetid://106463748010353"
+            newSky.SkyboxUp = "rbxassetid://106463748010353"
+        end
+
+        ativarDominio()
+
+        -- Sistema de áudio
+        local selectedAudioID = 77326881595922
+
+        task.spawn(function()
+            while not cancelExpansion do
+                local remote = ReplicatedStorage:FindFirstChild("RE") and ReplicatedStorage.RE:FindFirstChild("1Gu1nSound1s")
+                if remote then
+                    remote:FireServer(workspace, selectedAudioID, 1)
+                end
+
+                local root = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
+                if root then
+                    local sound = Instance.new("Sound")
+                    sound.SoundId = "rbxassetid://" .. selectedAudioID
+                    sound.Volume = 1
+                    sound.Looped = false
+                    sound.Parent = root
+                    sound:Play()
+                    sound.Ended:Connect(function() sound:Destroy() end)
+                    task.wait(sound.TimeLength + 0.1)
+                else
+                    break
+                end
+            end
+        end)
+
+        -- Sistema de ataque automático
+        local RE = ReplicatedStorage:WaitForChild("RE")
+        local ClearEvent = RE:FindFirstChild("1Clea1rTool1s")
+        local ToolEvent = RE:FindFirstChild("1Too1l")
+        local FireEvent = RE:FindFirstChild("1Gu1n")
+
+        local function clearAllTools()
+            if ClearEvent then ClearEvent:FireServer("ClearAllTools") end
+        end
+        
+        local function getAssault()
+            if ToolEvent then ToolEvent:InvokeServer("PickingTools","Assault") end
+        end
+        
+        local function hasAssault() 
+            return LocalPlayer.Backpack:FindFirstChild("Assault") ~= nil 
+        end
+        
+        local function fireAtPart(targetPart)
+            local gunScript = LocalPlayer.Backpack:FindFirstChild("Assault") and LocalPlayer.Backpack.Assault:FindFirstChild("GunScript_Local")
+            if not gunScript or not targetPart then return end
+            local args = {
+                targetPart,
+                targetPart,
+                Vector3.new(-1e18,-1e17,1e19),
+                targetPart.Position,
+                gunScript:FindFirstChild("MuzzleEffect"),
+                gunScript:FindFirstChild("HitEffect"),
+                0,
+                0,
+                {false},
+                {25,Vector3.new(100,100,100),BrickColor.new(29),0.25,Enum.Material.SmoothPlastic,0.25},
+                true,
+                false
+            }
+            FireEvent:FireServer(unpack(args))
+        end
+        
+        local function fireAtAllPlayers(times)
+            for i=1,times do
+                if cancelExpansion then break end
+                for _,p in ipairs(Players:GetPlayers()) do
+                    if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                        fireAtPart(p.Character.HumanoidRootPart)
+                        task.wait(0.1)
+                    end
+                end
+            end
+        end
+
+        -- Loop de ataque
+        task.spawn(function()
+            while not cancelExpansion do
+                clearAllTools()
+                getAssault()
+                repeat task.wait(0.2) until hasAssault() or cancelExpansion
+                if not cancelExpansion then 
+                    fireAtAllPlayers(3) 
+                    task.wait(1) 
+                end
+            end
+        end)
+    end)
+
+    -- Tool para parar expansão
+    local stopTool = Instance.new("Tool")
+    stopTool.Name = "Parar Tsukuyomi"
+    stopTool.RequiresHandle = false
+    stopTool.TextureId = "rbxassetid://75822847475817"
+    stopTool.Parent = LocalPlayer:WaitForChild("Backpack")
+
+    stopTool.Activated:Connect(function()
+        cancelExpansion = true
+
+        -- Parar e remover som
+        if expansionSound then
+            expansionSound:Stop()
+            expansionSound:Destroy()
+            expansionSound = nil
+        end
+
+        -- Remover modelo de expansão
+        if expansionModel and expansionModel.Parent then
+            expansionModel:Destroy()
+            expansionModel = nil
+        end
+
+        -- Restaurar céu original
+        local currentSky = Lighting:FindFirstChildOfClass("Sky")
+        if currentSky then currentSky:Destroy() end
+
+        if originalSky then
+            originalSky.Parent = Lighting
+            originalSky = nil
+        end
+
+        -- Mensagem de confirmação
+        if TextChatService.ChatVersion == Enum.ChatVersion.TextChatService then
+            TextChatService.TextChannels.RBXGeneral:SendAsync("Tsukuyomi cancelado")
+        else
+            print("Tsukuyomi Cancelado")
+        end
+    end)
+
+    -- Garantir que as tools sejam readicionadas após respawn
+    LocalPlayer.CharacterAdded:Connect(function()
+        wait(1)
+        startTool.Parent = LocalPlayer.Backpack
+        stopTool.Parent = LocalPlayer.Backpack
+    end)
+end)
