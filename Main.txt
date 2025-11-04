@@ -214,13 +214,13 @@ game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(un
                     -- Notificação de qual jogador foi bugado/desbugado
                     if isNowBugged then
                         StarterGui:SetCore("SendNotification", {
-                            Title = "Ban Hammer",
+                            Title = "Espada do caos",
                             Text = "Bugando: " .. targetPlayer.Name,
                             Duration = 3
                         })
                     else
                         StarterGui:SetCore("SendNotification", {
-                            Title = "Ban Hammer",
+                            Title = "Espada do Caos",
                             Text = "Desbugado: " .. targetPlayer.Name,
                             Duration = 3
                         })
