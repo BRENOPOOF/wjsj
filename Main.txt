@@ -157,7 +157,7 @@ game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(un
     local selectedAnimation = {id = 139707883040856}
     local active = {}
     local remote = ReplicatedStorage:WaitForChild("RE"):WaitForChild("1Gu1nSound1s")
-    local soundId = 96354959748895
+    local soundId = 6241709963
     local volume = 0.95
 
     local function playEmote()
@@ -317,13 +317,13 @@ game:GetService("ReplicatedStorage").Remotes.ChangeCharacterBody:InvokeServer(un
                 end
                 buggedPlayers[targetName] = nil
                 StarterGui:SetCore("SendNotification", {
-                    Title = "Bug System",
+                    Title = "Espada da morte",
                     Text = "Desbugado: " .. targetName,
                     Duration = 3
                 })
             else
                 StarterGui:SetCore("SendNotification", {
-                    Title = "Bug System",
+                    Title = "Espada da Morte",
                     Text = "Jogador não está bugado: " .. targetName,
                     Duration = 3
                 })
